@@ -4,7 +4,7 @@ on:
   schedule:
     # 5분마다 자동 실행
     - cron: '*/5 * * * *'
-  workflow_dispatch: # 수동 즉시 실행 버튼 활성화
+  workflow_dispatch: # 수동 즉시 실행 지원
 
 jobs:
   check-room:
@@ -21,18 +21,6 @@ jobs:
       - name: 패키지 설치
         run: pip install requests
 
-      # 웹에서 [Run workflow]를 직접 눌렀을 때만 텔레그램 테스트 메시지 전송
-      - name: 텔레그램 연동 테스트 전송 (수동 실행 시에만)
-        if: github.event_name == 'workflow_dispatch'
-        env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-        run: |
-          curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
-            -d "chat_id=${TELEGRAM_CHAT_ID}" \
-            -d "text=🔔 [GitHub Actions] 텔레그램 봇 연동이 정상 작동 중입니다!"
-
-      # 네이버 빈자리 조회 (자리가 났을 때만 파이썬 코드가 알림 전송)
       - name: 빈자리 조회 실행
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
